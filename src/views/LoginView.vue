@@ -3,6 +3,7 @@ import {ref} from "vue";
 import {useRouter} from "vue-router";
 import {loginApi} from "@/api/auth";
 import {useAuthStore} from "@/stores/authStore";
+import BaseButton from "@/components/BaseButton.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -76,10 +77,15 @@ const login = async () => {
         </div>
       </div>
 
-      <button class="btn" @click="login" :disabled="loading">
-        <span v-if="loading" class="spinner"></span>
-        {{ loading ? "Loading..." : "Masuk" }}
-      </button>
+      <BaseButton
+          id="btn-login"
+          name="loginButton"
+          label="Masuk"
+          variant="primary"
+          full
+          :loading="loading"
+          @click="login"
+      />
     </div>
   </div>
 </template>
