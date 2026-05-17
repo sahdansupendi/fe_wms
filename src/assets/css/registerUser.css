@@ -1,0 +1,396 @@
+/* ── Page Header ── */
+.register-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: fadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.register-sub {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.3);
+    margin-top: 4px;
+    font-weight: 300;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+}
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: #fff;
+}
+
+/* ── Register Card ── */
+.register-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 28px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: fadeUp 0.4s 0.06s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.register-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.register-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid rgba(37, 99, 235, 0.25);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #93c5fd;
+}
+
+.register-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+
+/* ── Alerts ── */
+.reg-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 13px;
+}
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+/* ── Form ── */
+.reg-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.required-star {
+    color: #f87171;
+    margin-left: 2px;
+}
+
+/* ── Input Wrap ── */
+.input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    color: rgba(255, 255, 255, 0.25);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+.reg-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+    padding: 12px 14px 12px 42px;
+    color: #fff;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.reg-input::placeholder {
+    color: rgba(255, 255, 255, 0.18);
+}
+
+.reg-input:focus {
+    border-color: rgba(37, 99, 235, 0.55);
+    background: rgba(37, 99, 235, 0.07);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.reg-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.has-error .reg-input,
+.has-error .reg-select {
+    border-color: rgba(239, 68, 68, 0.45);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.has-error .reg-input:focus,
+.has-error .reg-select:focus {
+    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* ── Toggle password ── */
+.toggle-pass {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+}
+.toggle-pass:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Select ── */
+.select-wrap {
+    position: relative;
+}
+
+.reg-select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+    padding: 12px 42px 12px 42px;
+    color: #fff;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.reg-select:focus {
+    border-color: rgba(37, 99, 235, 0.55);
+    background: rgba(37, 99, 235, 0.07);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.reg-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.reg-select option {
+    background: #0d0d1a;
+    color: #fff;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 14px;
+    color: rgba(255, 255, 255, 0.25);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+/* ── Role Preview ── */
+.role-preview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.role-preview-id {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Field Error ── */
+.field-error {
+    font-size: 12px;
+    color: #f87171;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.field-error::before {
+    content: '⚠';
+    font-size: 10px;
+}
+
+/* ── Divider ── */
+.form-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin: 4px 0;
+}
+
+/* ── Form Actions ── */
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-reset {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+    padding: 11px 18px;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+}
+.btn-reset:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.09);
+    color: #fff;
+}
+.btn-reset:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.reg-submit {
+    height: auto;
+    padding: 11px 22px;
+    font-size: 14px;
+}
+
+/* ── Result Card ── */
+.result-card {
+    background: rgba(34, 197, 94, 0.06);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 16px;
+    padding: 20px 24px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.result-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.result-success-icon {
+    width: 30px;
+    height: 30px;
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4ade80;
+    flex-shrink: 0;
+}
+
+.result-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4ade80;
+    flex: 1;
+}
+
+.result-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    font-size: 12px;
+    transition: color 0.15s;
+}
+.result-close:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.result-user-detail {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+}
+
+/* ── Slide-up Transition ── */
+.slide-up-enter-active {
+    animation: fadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.slide-up-leave-active {
+    animation: fadeUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) reverse both;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .register-card {
+        padding: 18px 16px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .btn-reset,
+    .reg-submit {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .register-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}

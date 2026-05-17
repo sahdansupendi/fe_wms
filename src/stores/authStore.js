@@ -7,6 +7,7 @@ export const useAuthStore = defineStore("auth", {
     state: () => ({
         token: localStorage.getItem("token") || null,
         refreshToken: localStorage.getItem("refreshToken") || null,
+        userid: localStorage.getItem("userid") || null,
         username: localStorage.getItem("username") || null,
         rolename: localStorage.getItem("roleName") || null,
     }),
@@ -19,11 +20,13 @@ export const useAuthStore = defineStore("auth", {
         setAuth(data) {
             this.token = data.token;
             this.refreshToken = data.refreshToken;
+            this.userid = data.userid;
             this.username = data.username;
             this.rolename = data.rolename;
 
             localStorage.setItem("token", data.token);
             localStorage.setItem("refreshToken", data.refreshToken);
+            localStorage.setItem("userid", data.userid);
             localStorage.setItem("username", data.username);
             localStorage.setItem("rolename", data.rolename);
 
@@ -34,6 +37,7 @@ export const useAuthStore = defineStore("auth", {
         clearAuth() {
             this.token = null;
             this.refreshToken = null;
+            this.userid = null;
             this.username = null;
             this.roleName = null;
 
@@ -81,7 +85,6 @@ export const useAuthStore = defineStore("auth", {
                 localStorage.setItem("token", newToken);
                 localStorage.setItem("refreshToken", newRefreshToken);
 
-                console.log("Token refreshed silently");
             } catch (error) {
                 console.log("Refresh token expired / invalid paksa logout");
                 this.clearAuth();
