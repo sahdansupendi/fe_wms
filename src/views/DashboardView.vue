@@ -41,7 +41,6 @@ const countAllUsers = async () => {
   usersError.value   = "";
   try {
     const res    = await countusersApi();
-    console.log(res.data)
     users.value = res.data.data;
   } catch (e) {
     usersError.value = e.response?.data?.message || "Gagal memuat data users";

@@ -1,18 +1,52 @@
 <script setup>
-import { ref, reactive, computed } from "vue";
-import { updateuserApi } from "@/api/user.js";
-import { useAuthStore } from "@/stores/authStore.js";
+import {ref, onMounted, reactive, computed, watch} from "vue";
+import {findmeApi, updateuserApi} from "@/api/user.js";
 
 const emit = defineEmits(['navigate']);
 
-const authStore = useAuthStore();
+const users = ref([]);
+
+const usersLoading = ref(false);
+const usersError = ref("");
+
+const currentUsers = async () => {
+  usersLoading.value = true;
+  usersError.value = "";
+
+  try {
+    const res = await findmeApi();
+    users.value = res.data.data;
+
+    form.username = users.value.username || '';
+    form.email = users.value.email || '';
+    form.roleid = roleid(users.value.rolename) || '';
+
+  } catch (e) {
+    usersError.value =
+        e.response?.data?.message ||
+        "Gagal memuat data users";
+  } finally {
+    usersLoading.value = false;
+  }
+};
+
+const roleid = (rolename) => {
+  if (rolename?.includes("SUPERUSER")) return "00";
+  if (rolename?.includes("ADMIN")) return "01";
+  if (rolename?.includes("USER")) return "02";
+  return '';
+}
+
+onMounted(() => {
+  currentUsers();
+})
 
 /*
   STATE
 */
 
 const form = reactive({
-  username: authStore.username || '',
+  username: '',
   email: '',
   roleid: '',
 });
@@ -98,7 +132,7 @@ const handleSubmit = async () => {
   };
 
   try {
-    const response = await updateuserApi(authStore.userid,payload);
+    const response = await updateuserApi(payload);
     const data = response.data;
 
     if (data.success) {
@@ -131,9 +165,10 @@ const handleSubmit = async () => {
 };
 
 const resetForm = () => {
-  form.username = authStore.username || '';
-  form.email = '';
-  form.roleid = '';
+  currentUsers();
+  form.username = users.value.username || '';
+  form.email = users.value.email || '';
+  form.roleid = roleid(users.value.rolename) ||'';
   errors.value = {};
   globalError.value = '';
 };
@@ -246,14 +281,6 @@ const resetForm = () => {
                 <polyline points="6 9 12 15 18 9"/>
               </svg>
             </span>
-          </div>
-
-          <!-- Role Preview Chip -->
-          <div v-if="selectedRole" class="role-preview">
-            <span :class="['role-chip', roleChipClass(form.roleid)]">
-              {{ selectedRole.name }}
-            </span>
-            <span class="role-preview-id">ID: {{ form.roleid }}</span>
           </div>
 
           <span v-if="errors.roleid" class="field-error">{{ errors.roleid }}</span>
