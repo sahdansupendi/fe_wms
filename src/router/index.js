@@ -13,11 +13,36 @@ const routes = [
     },
     {
         path: "/dashboard",
-        name: "dashboard",
         component: DashboardView,
         meta: {
             requiresAuth: true,
         },
+        children: [
+            {
+                path: "",
+                name: "dashboard",
+                component: () => import("@/views/DashboardHome.vue"),
+                meta: { title: "Dashboard" }
+            },
+            {
+                path: "users",
+                name: "users",
+                component: () => import("@/views/UsersView.vue"),
+                meta: { title: "Users" }
+            },
+            {
+                path: "register",
+                name: "registeruser",
+                component: () => import("@/components/RegisterUser.vue"),
+                meta: { title: "Register User" }
+            },
+            {
+                path: "update",
+                name: "updateuser",
+                component: () => import("@/components/UpdateUser.vue"),
+                meta: { title: "Update User" }
+            }
+        ]
     },
 ];
 

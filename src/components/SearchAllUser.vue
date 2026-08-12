@@ -124,15 +124,9 @@ const roleColor = (role) => {
 
           <td>
             <div class="td-user">
-
-              <div class="td-avatar">
-                {{ user.username[0].toUpperCase() }}
-              </div>
-
               <span>
                   {{ user.username }}
-                </span>
-
+              </span>
             </div>
           </td>
 

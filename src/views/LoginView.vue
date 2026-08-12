@@ -42,50 +42,56 @@ const login = async () => {
 </script>
 
 <template>
-  <div class="login-container">
-    <!-- Background -->
-    <div class="bg">
-      <div class="orb orb1"></div>
-      <div class="orb orb2"></div>
-      <div class="orb orb3"></div>
+  <div class="split-layout">
+    <!-- Left: Form -->
+    <div class="left-panel">
+      <div class="form-wrapper">
+        <div class="logo-area">
+          <div class="logo-icon">W</div>
+          <div class="logo-text">WMS SYSTEM</div>
+        </div>
+
+        <h1 class="heading">Selamat Datang</h1>
+        <p class="subheading">Masuk ke akun Anda untuk melanjutkan</p>
+
+        <div v-if="errorMessage" class="error-box">
+          ⚠️ {{ errorMessage }}
+        </div>
+
+        <div class="field">
+          <label>Username</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input v-model="username" type="text" placeholder="Masukkan username"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input v-model="password" type="password" placeholder="Masukkan password" @keyup.enter="login"/>
+          </div>
+        </div>
+
+        <BaseButton
+            id="btn-login"
+            name="loginButton"
+            label="Masuk"
+            variant="primary"
+            full
+            :loading="loading"
+            @click="login"
+        />
+      </div>
     </div>
-    <div class="grid-overlay"></div>
 
-    <!-- Card -->
-    <div class="card">
-
-      <h1 class="heading">Selamat Datang</h1>
-      <p class="subheading">Masuk ke akun Anda untuk melanjutkan</p>
-
-      <div v-if="errorMessage" class="error-box">
-        ⚠️ {{ errorMessage }}
+    <!-- Right: Image -->
+    <div class="right-panel">
+      <div class="image-overlay">
+        <h2>Manajemen Gudang<br/>Modern & Efisien</h2>
+        <p>Kendalikan inventaris, pantau stok, dan tingkatkan produktivitas bisnis Anda.</p>
       </div>
-
-      <div class="field">
-        <label>Username</label>
-        <div class="input-wrap">
-          <span class="input-icon">👤</span>
-          <input v-model="username" type="text" placeholder="Masukkan username"/>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Password</label>
-        <div class="input-wrap">
-          <span class="input-icon">🔒</span>
-          <input v-model="password" type="password" placeholder="Masukkan password" @keyup.enter="login"/>
-        </div>
-      </div>
-
-      <BaseButton
-          id="btn-login"
-          name="loginButton"
-          label="Masuk"
-          variant="primary"
-          full
-          :loading="loading"
-          @click="login"
-      />
     </div>
   </div>
 </template>

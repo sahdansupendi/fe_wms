@@ -122,30 +122,20 @@ const roleColor = (role) => {
       </div>
 
       <div class="user-detail-card">
+        <div class="detail-header">Username</div>
+        <div class="detail-header">Email</div>
+        <div class="detail-header">Role</div>
 
-        <div class="user-detail-avatar">
-          {{ searchResult.username[0].toUpperCase() }}
+        <div class="detail-col name-col">
+          {{ searchResult.username }}
         </div>
-
-        <div class="user-detail-info">
-
-          <p class="user-detail-name">
-            {{ searchResult.username }}
-          </p>
-
-          <p class="user-detail-email">
-            {{ searchResult.email }}
-          </p>
-
-          <span
-              :class="[
-              'role-chip',
-              roleColor(searchResult.rolename)
-            ]"
-          >
+        <div class="detail-col email-col">
+          {{ searchResult.email }}
+        </div>
+        <div class="detail-col role-col">
+          <span :class="['role-chip', roleColor(searchResult.rolename)]">
             {{ searchResult.rolename }}
           </span>
-
         </div>
       </div>
     </div>
