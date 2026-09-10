@@ -89,8 +89,8 @@ const login = async () => {
     <!-- Right: Image -->
     <div class="right-panel">
       <div class="image-overlay">
-        <h2>Manajemen Gudang<br/>Modern & Efisien</h2>
-        <p>Kendalikan inventaris, pantau stok, dan tingkatkan produktivitas bisnis Anda.</p>
+<!--        <h2>Manajemen Gudang<br/>Modern & Efisien</h2>
+        <p>Kendalikan inventaris, pantau stok, dan tingkatkan produktivitas bisnis Anda.</p>-->
       </div>
     </div>
   </div>
