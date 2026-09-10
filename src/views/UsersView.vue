@@ -1,6 +1,6 @@
 <script setup>
-import SearchUser from "@/components/SearchUser.vue";
-import SearchAllUser from "@/components/SearchAllUser.vue";
+import SearchUser from "@/components/Users/SearchUser.vue";
+import SearchAllUser from "@/components/Users/SearchAllUser.vue";
 </script>
 
 <template>

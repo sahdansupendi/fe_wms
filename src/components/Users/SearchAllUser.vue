@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { getAllUsersApi } from "@/api/user";
+import { getAllUsersApi } from "@/api/user.js";
 
 const users = ref([]);
 const usersLoading = ref(false);

@@ -1,8 +1,8 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
-import DashboardSidebar from "@/components/DashboardSidebar.vue";
-import DashboardHeader from "@/components/DashboardHeader.vue";
+import DashboardSidebar from "@/components/dashboard/DashboardSidebar.vue";
+import DashboardHeader from "@/components/dashboard/DashboardHeader.vue";
 
 const route = useRoute();
 

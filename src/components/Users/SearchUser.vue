@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { getUserByUsernameApi } from "@/api/user";
+import { getUserByUsernameApi } from "@/api/user.js";
 
 const searchQuery   = ref("");
 const searchLoading = ref(false);

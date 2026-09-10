@@ -1,50 +1,14 @@
 <script setup>
-import {ref, onMounted, reactive, computed, watch} from "vue";
-import {findmeApi, updateuserApi} from "@/api/user.js";
+import { ref, onMounted, reactive, computed } from "vue";
+import { findmeApi, updateuserApi } from "@/api/user.js";
+import FormActions from "@/components/ui/FormActions.vue";
+import { useFormReset } from "@/composables/useFormReset.js";
 
 const emit = defineEmits(['navigate']);
 
-const users = ref([]);
-
-const usersLoading = ref(false);
-const usersError = ref("");
-
-const currentUsers = async () => {
-  usersLoading.value = true;
-  usersError.value = "";
-
-  try {
-    const res = await findmeApi();
-    users.value = res.data.data;
-
-    form.username = users.value.username || '';
-    form.email = users.value.email || '';
-    form.roleid = roleid(users.value.rolename) || '';
-
-  } catch (e) {
-    usersError.value =
-        e.response?.data?.message ||
-        "Gagal memuat data users";
-  } finally {
-    usersLoading.value = false;
-  }
-};
-
-const roleid = (rolename) => {
-  if (rolename?.includes("SUPERUSER")) return "00";
-  if (rolename?.includes("ADMIN")) return "01";
-  if (rolename?.includes("USER")) return "02";
-  return '';
-}
-
-onMounted(() => {
-  currentUsers();
-})
-
 /*
-  STATE
+  STATE — dideklarasikan dulu agar bisa dipakai oleh composable di bawah
 */
-
 const form = reactive({
   username: '',
   email: '',
@@ -57,23 +21,42 @@ const roles = ref([
   { id: '02', name: 'User' },
 ]);
 
-const errors = ref({});
+const errors     = ref({});
 const globalError = ref('');
-const successMsg = ref('');
-const loading = ref(false);
-const savedUser = ref(null);
+const successMsg  = ref('');
+const loading     = ref(false);
+const savedUser   = ref(null);
+const users       = ref([]);
+const usersLoading = ref(false);
+const usersError   = ref('');
 
 /*
-  COMPUTED
+  FORM RESET — cukup 1 baris, tidak ada method lokal lagi.
+  composable menerima form + semua ref yang perlu di-reset sekaligus.
 */
-
-const selectedRole = computed(() => {
-  return roles.value.find(r => r.id === form.roleid) || null;
-});
+const { resetForm } = useFormReset(
+  form,
+  { username: '', email: '', roleid: '' },
+  {
+    errors:      { ref: errors,      defaultValue: {} },
+    globalError: { ref: globalError, defaultValue: '' },
+    successMsg:  { ref: successMsg,  defaultValue: '' },
+  }
+);
 
 /*
-  METHODS
+  HELPERS
 */
+const roleid = (rolename) => {
+  if (rolename?.includes("SUPERUSER")) return "00";
+  if (rolename?.includes("ADMIN"))     return "01";
+  if (rolename?.includes("USER"))      return "02";
+  return '';
+};
+
+const selectedRole = computed(() =>
+  roles.value.find(r => r.id === form.roleid) || null
+);
 
 const clearError = (field) => {
   if (errors.value[field]) {
@@ -82,7 +65,7 @@ const clearError = (field) => {
     errors.value = e;
   }
   globalError.value = '';
-  successMsg.value = '';
+  successMsg.value  = '';
 };
 
 const roleChipClass = (id) => {
@@ -91,35 +74,56 @@ const roleChipClass = (id) => {
   return 'chip-user';
 };
 
+/*
+  FETCH — isi form dari data user yang sedang login
+*/
+const currentUsers = async () => {
+  usersLoading.value = true;
+  usersError.value   = '';
 
+  try {
+    const res = await findmeApi();
+    users.value = res.data.data;
+
+    form.username = users.value.username || '';
+    form.email    = users.value.email    || '';
+    form.roleid   = roleid(users.value.rolename) || '';
+
+  } catch (e) {
+    usersError.value = e.response?.data?.message || "Gagal memuat data users";
+  } finally {
+    usersLoading.value = false;
+  }
+};
+
+onMounted(() => currentUsers());
+
+/*
+  VALIDATE
+*/
 const validate = () => {
   const e = {};
-  const { username, email, roleid } = form;
+  const { username, email, roleid: rid } = form;
 
-  if (!username) {
-    e.username = 'Username wajib diisi';
-  } else if (username.length < 3) {
-    e.username = 'Username minimal 3 karakter';
-  }
+  if (!username)          e.username = 'Username wajib diisi';
+  else if (username.length < 3) e.username = 'Username minimal 3 karakter';
 
-  if (!email) {
-    e.email = 'Email wajib diisi';
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    e.email = 'Format email tidak valid';
-  }
+  if (!email)             e.email = 'Email wajib diisi';
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Format email tidak valid';
 
-  if (!roleid) {
-    e.roleid = 'Role wajib dipilih';
-  }
+  if (!rid)               e.roleid = 'Role wajib dipilih';
 
   errors.value = e;
   return Object.keys(e).length === 0;
 };
 
+/*
+  SUBMIT
+*/
 const handleSubmit = async () => {
   globalError.value = '';
-  successMsg.value = '';
-  savedUser.value = null;
+  successMsg.value  = '';
+  savedUser.value   = null;
 
   if (!validate()) return;
 
@@ -127,8 +131,8 @@ const handleSubmit = async () => {
 
   const payload = {
     username: form.username.trim().toLowerCase(),
-    email: form.email.trim().toLowerCase(),
-    roleid: form.roleid,
+    email:    form.email.trim().toLowerCase(),
+    roleid:   form.roleid,
   };
 
   try {
@@ -136,41 +140,28 @@ const handleSubmit = async () => {
     const data = response.data;
 
     if (data.success) {
-      successMsg.value = data.message || 'Update User Successfully';
       savedUser.value = data.data;
-      resetForm();
+
+      resetForm();      // reset form dulu (successMsg → '')
+      currentUsers();   // re-fetch data dari server
+
+      // Baru set successMsg setelah reset, supaya alert tetap tampil
+      successMsg.value = data.message || 'Update User Successfully';
     }
-    console.log("berhasil")
 
   } catch (err) {
-
     const res = err.response?.data;
-    console.log(res);
 
     if (res?.details) {
-
-      errors.value = { ...res.details };
-
-      globalError.value =
-          Object.values(res.details).join(', ') || 'Validation Error';
+      errors.value  = { ...res.details };
+      globalError.value = Object.values(res.details).join(', ') || 'Validation Error';
     } else {
-
-      globalError.value =
-          res?.message || 'Tidak dapat terhubung ke server';
+      globalError.value = res?.message || 'Tidak dapat terhubung ke server';
     }
 
   } finally {
     loading.value = false;
   }
-};
-
-const resetForm = () => {
-  currentUsers();
-  form.username = users.value.username || '';
-  form.email = users.value.email || '';
-  form.roleid = roleid(users.value.rolename) ||'';
-  errors.value = {};
-  globalError.value = '';
 };
 </script>
 
@@ -286,26 +277,14 @@ const resetForm = () => {
           <span v-if="errors.roleid" class="field-error">{{ errors.roleid }}</span>
         </div>
 
-        <!-- Divider -->
-        <div class="form-divider"></div>
-
         <!-- Actions -->
-        <div class="form-actions">
-          <button type="button" class="btn-reset" @click="resetForm" :disabled="loading">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="1 4 1 10 7 10"/>
-              <path d="M3.51 15a9 9 0 1 0 .49-3.4"/>
-            </svg>
-            Reset
-          </button>
-          <button type="submit" class="search-btn reg-submit" :disabled="loading">
-            <span v-if="loading" class="spinner-sm"></span>
-            <svg v-else width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            {{ loading ? 'Menyimpan...' : 'Simpan Pengguna' }}
-          </button>
-        </div>
+        <div class="form-divider"></div>
+        <FormActions
+            mode="update"
+            :loading="loading"
+            @reset="resetForm"
+            @update="handleSubmit"
+        />
       </form>
     </div>
   </div>

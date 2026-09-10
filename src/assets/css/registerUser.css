@@ -275,43 +275,6 @@
     margin: 4px 0;
 }
 
-/* ── Form Actions ── */
-.form-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.btn-reset {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    border-radius: 4px;
-    padding: 4px 8px;
-    color: #6b7280;
-    font-family: 'Sora', sans-serif;
-    font-size: 11px;
-    cursor: pointer;
-    transition: background 0.18s, color 0.18s;
-}
-.btn-reset:hover:not(:disabled) {
-    background: #e5e7eb;
-    color: #111827;
-}
-.btn-reset:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.reg-submit {
-    height: auto;
-    border-radius: 4px;
-    padding: 4px 10px;
-    font-size: 11px;
-}
 
 /* ── Result Card ── */
 .result-card {
@@ -384,17 +347,6 @@
 @media (max-width: 600px) {
     .register-card {
         padding: 18px 16px;
-    }
-
-    .form-actions {
-        flex-direction: column-reverse;
-        align-items: stretch;
-    }
-
-    .btn-reset,
-    .reg-submit {
-        width: 100%;
-        justify-content: center;
     }
 
     .register-header {

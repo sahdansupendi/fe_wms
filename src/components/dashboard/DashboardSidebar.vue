@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
-import { useAuthStore } from "@/stores/authStore";
-import { logoutApi } from "@/api/auth";
+import { useAuthStore } from "@/stores/authStore.js";
+import { logoutApi } from "@/api/auth.js";
 import { useRouter, useRoute } from "vue-router";
 
 const props = defineProps({
@@ -30,6 +30,15 @@ const menuItems = [
       { id: "users", label: "List User" },
       { id: "registeruser", label: "Register User" },
       { id: "updateuser", label: "Update User" },
+    ]
+  },
+  {
+    id: "parent-product",
+    label: "Product",
+    icon: "◈",
+    children: [
+      {id: "categoryproduct", label: "Register Category Product"},
+      {id: "product",label: "Register Product"}
     ]
   }
 ];
@@ -166,7 +175,7 @@ const logout = async () => {
 .sidebar {
     position: relative;
     z-index: 40;
-    width: 200px;
+    width: 220px;
     height: 100%;
     background: #ffffff;
     border-right: 1px solid #e5e7eb;
@@ -179,7 +188,7 @@ const logout = async () => {
 }
 
 .sidebar-inner {
-    width: 200px;
+    width: 220px;
     height: 100%;
     display: flex;
     flex-direction: column;

@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/authStore";
 import { countusersApi } from "@/api/user";
 import StatCard from "@/components/dashboard/StatCard.vue";
-import SearchAllUser from "@/components/SearchAllUser.vue";
+import SearchAllUser from "@/components/Users/SearchAllUser.vue";
 
 const authStore = useAuthStore();
 

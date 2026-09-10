@@ -33,13 +33,13 @@ const routes = [
             {
                 path: "register",
                 name: "registeruser",
-                component: () => import("@/components/RegisterUser.vue"),
+                component: () => import("@/components/Users/RegisterUser.vue"),
                 meta: { title: "Register User" }
             },
             {
                 path: "update",
                 name: "updateuser",
-                component: () => import("@/components/UpdateUser.vue"),
+                component: () => import("@/components/Users/UpdateUser.vue"),
                 meta: { title: "Update User" }
             }
         ]

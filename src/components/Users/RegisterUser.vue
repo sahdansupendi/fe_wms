@@ -2,9 +2,11 @@
 
 import { ref, reactive, computed } from "vue";
 import { registerserApi } from "@/api/user.js";
+import FormActions from "@/components/ui/FormActions.vue";
+import { useFormReset } from "@/composables/useFormReset.js";
 
 const emit = defineEmits(['navigate']);
-
+const successMsg = ref('');
 /*
   STATE
 */
@@ -23,13 +25,12 @@ const roles = ref([
   { id: '02', name: 'User' },
 ]);
 
-const errors = ref({});
+const errors     = ref({});
 const globalError = ref('');
-const successMsg = ref('');
-const loading = ref(false);
+const loading    = ref(false);
 const showPassword = ref(false);
 const confirmShowPassword = ref(false);
-const savedUser = ref(null);
+const savedUser  = ref(null);
 
 /*
   COMPUTED
@@ -151,13 +152,12 @@ const handleSubmit = async () => {
     const data = response.data;
 
     if (data.success) {
-
-      successMsg.value =
-          data.message || 'Register User Successfully';
-
       savedUser.value = data.data;
 
-      resetForm();
+      resetForm(); // ← reset form dulu (termasuk successMsg → '')
+
+      // Baru set successMsg setelah reset, supaya alert tetap tampil
+      successMsg.value = data.message || 'Register User Successfully';
     }
 
   } catch (err) {
@@ -194,19 +194,22 @@ const handleSubmit = async () => {
   }
 };
 
-const resetForm = () => {
-
-  form.username = '';
-  form.email = '';
-  form.password = '';
-  form.confirmPassword = '';
-  form.roleid = '';
-
-  errors.value = {};
-  globalError.value = '';
-  showPassword.value = false;
-  confirmShowPassword.value = false;
-};
+/*
+  FORM RESET
+  — tidak perlu buat method resetForm lagi, cukup 1 baris dari composable.
+  — composable dikonfigurasi di sini, setelah semua ref & reactive dideklarasikan.
+*/
+const { resetForm } = useFormReset(
+  form,
+  { username: '', email: '', password: '', confirmPassword: '', roleid: '' },
+  {
+    errors:              { ref: errors,              defaultValue: {} },
+    globalError:         { ref: globalError,         defaultValue: '' },
+    successMsg:          { ref: successMsg,          defaultValue: '' },
+    showPassword:        { ref: showPassword,        defaultValue: false },
+    confirmShowPassword: { ref: confirmShowPassword, defaultValue: false },
+  }
+);
 
 </script>
 
@@ -389,61 +392,19 @@ const resetForm = () => {
             </span>
           </div>
 
-          <!-- Role Preview Chip -->
-<!--          <div v-if="selectedRole" class="role-preview">
-            <span :class="['role-chip', roleChipClass(form.roleid)]">
-              {{ selectedRole.name }}
-            </span>
-            <span class="role-preview-id">ID: {{ form.roleid }}</span>
-          </div>-->
-
           <span v-if="errors.roleid" class="field-error">{{ errors.roleid }}</span>
         </div>
 
-        <!-- Divider -->
-        <div class="form-divider"></div>
-
         <!-- Actions -->
-        <div class="form-actions">
-          <button type="button" class="btn-reset" @click="resetForm" :disabled="loading">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.4"/>
-            </svg>
-            Reset
-          </button>
-          <button type="submit" class="search-btn reg-submit" :disabled="loading">
-            <span v-if="loading" class="spinner-sm"></span>
-            <svg v-else width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            {{ loading ? 'Menyimpan...' : 'Simpan Pengguna' }}
-          </button>
-        </div>
+        <div class="form-divider"></div>
+        <FormActions
+            mode="create"
+            :loading="loading"
+            @reset="resetForm"
+            @save="handleSubmit"
+        />
       </form>
     </div>
-
-    <!-- Success Result Card -->
-<!--    <transition name="slide-up">
-      <div v-if="savedUser" class="result-card">
-        <div class="result-card-header">
-          <div class="result-success-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </div>
-          <span class="result-title">Pengguna Berhasil Didaftarkan</span>
-          <button class="result-close" @click="savedUser = null">✕</button>
-        </div>
-        <div class="result-user-detail">
-          <div class="user-detail-avatar">{{ savedUser.username.charAt(0).toUpperCase() }}</div>
-          <div class="user-detail-info">
-            <div class="user-detail-name">{{ savedUser.username }}</div>
-            <div class="user-detail-email">{{ savedUser.email }}</div>
-          </div>
-          <span :class="['role-chip', roleChipByName(savedUser.rolename)]">{{ savedUser.rolename }}</span>
-        </div>
-      </div>
-    </transition>-->
   </div>
 </template>
 
