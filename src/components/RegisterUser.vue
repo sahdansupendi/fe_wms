@@ -99,7 +99,7 @@ const validate = () => {
   if (!email) {
     e.email = 'Email wajib diisi';
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    e.email = 'Format email tidak valid';
+    e.email = 'Format email tidak valid, contoh: user@example.com';
   }
 
   if (!password) {
@@ -390,12 +390,12 @@ const resetForm = () => {
           </div>
 
           <!-- Role Preview Chip -->
-          <div v-if="selectedRole" class="role-preview">
+<!--          <div v-if="selectedRole" class="role-preview">
             <span :class="['role-chip', roleChipClass(form.roleid)]">
               {{ selectedRole.name }}
             </span>
             <span class="role-preview-id">ID: {{ form.roleid }}</span>
-          </div>
+          </div>-->
 
           <span v-if="errors.roleid" class="field-error">{{ errors.roleid }}</span>
         </div>
