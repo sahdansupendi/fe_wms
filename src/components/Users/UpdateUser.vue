@@ -2,9 +2,16 @@
 import { ref, onMounted, reactive, computed } from "vue";
 import { findmeApi, updateuserApi } from "@/api/user.js";
 import FormActions from "@/components/ui/FormActions.vue";
+import ConfirmDialog from "@/components/ui/ConfirmDialog.vue";
+import ToastNotif from "@/components/ui/ToastNotif.vue";
 import { useFormReset } from "@/composables/useFormReset.js";
+import { useConfirmDialog } from "@/composables/useConfirmDialog.js";
+import { useToast } from "@/composables/useToast.js";
 
 const emit = defineEmits(['navigate']);
+
+const { confirmDialog, openConfirm, closeConfirm } = useConfirmDialog();
+const { toast, showToast, hideToast } = useToast();
 
 /*
   STATE — dideklarasikan dulu agar bisa dipakai oleh composable di bawah
@@ -23,7 +30,6 @@ const roles = ref([
 
 const errors     = ref({});
 const globalError = ref('');
-const successMsg  = ref('');
 const loading     = ref(false);
 const savedUser   = ref(null);
 const users       = ref([]);
@@ -40,7 +46,6 @@ const { resetForm } = useFormReset(
   {
     errors:      { ref: errors,      defaultValue: {} },
     globalError: { ref: globalError, defaultValue: '' },
-    successMsg:  { ref: successMsg,  defaultValue: '' },
   }
 );
 
@@ -65,7 +70,6 @@ const clearError = (field) => {
     errors.value = e;
   }
   globalError.value = '';
-  successMsg.value  = '';
 };
 
 const roleChipClass = (id) => {
@@ -120,13 +124,15 @@ const validate = () => {
 /*
   SUBMIT
 */
-const handleSubmit = async () => {
+const handleUpdateClick = () => {
   globalError.value = '';
-  successMsg.value  = '';
-  savedUser.value   = null;
-
   if (!validate()) return;
+  openConfirm('update');
+};
 
+const executeSubmit = async () => {
+  globalError.value = '';
+  savedUser.value   = null;
   loading.value = true;
 
   const payload = {
@@ -141,15 +147,13 @@ const handleSubmit = async () => {
 
     if (data.success) {
       savedUser.value = data.data;
-
-      resetForm();      // reset form dulu (successMsg → '')
-      currentUsers();   // re-fetch data dari server
-
-      // Baru set successMsg setelah reset, supaya alert tetap tampil
-      successMsg.value = data.message || 'Update User Successfully';
+      resetForm();
+      currentUsers();
+      closeConfirm();
+      showToast('update');
     }
-
   } catch (err) {
+    closeConfirm();
     const res = err.response?.data;
 
     if (res?.details) {
@@ -158,7 +162,6 @@ const handleSubmit = async () => {
     } else {
       globalError.value = res?.message || 'Tidak dapat terhubung ke server';
     }
-
   } finally {
     loading.value = false;
   }
@@ -182,16 +185,7 @@ const handleSubmit = async () => {
         <span class="update-card-title">Informasi Pengguna</span>
       </div>
 
-      <!-- Success Alert -->
-      <div v-if="successMsg" class="alert-success reg-alert">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             style="flex-shrink:0">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-        {{ successMsg }}
-      </div>
-
-      <form class="reg-form" @submit.prevent="handleSubmit" novalidate>
+      <form class="reg-form" @submit.prevent="handleUpdateClick" novalidate>
         <!-- Username -->
         <div class="form-group" :class="{ 'has-error': errors.username }">
           <label class="form-label">
@@ -283,10 +277,26 @@ const handleSubmit = async () => {
             mode="update"
             :loading="loading"
             @reset="resetForm"
-            @update="handleSubmit"
+            @update="handleUpdateClick"
         />
       </form>
     </div>
+
+    <!-- Reusable Confirmation Dialog -->
+    <ConfirmDialog
+      :show="confirmDialog.show"
+      :type="confirmDialog.type"
+      :loading="loading"
+      @confirm="executeSubmit"
+      @cancel="closeConfirm"
+    />
+
+    <!-- Reusable Toast Notification -->
+    <ToastNotif
+      :show="toast.show"
+      :type="toast.type"
+      @close="hideToast"
+    />
   </div>
 </template>
 

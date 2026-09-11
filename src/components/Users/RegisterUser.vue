@@ -3,10 +3,17 @@
 import { ref, reactive, computed } from "vue";
 import { registerserApi } from "@/api/user.js";
 import FormActions from "@/components/ui/FormActions.vue";
+import ConfirmDialog from "@/components/ui/ConfirmDialog.vue";
+import ToastNotif from "@/components/ui/ToastNotif.vue";
 import { useFormReset } from "@/composables/useFormReset.js";
+import { useConfirmDialog } from "@/composables/useConfirmDialog.js";
+import { useToast } from "@/composables/useToast.js";
 
 const emit = defineEmits(['navigate']);
-const successMsg = ref('');
+
+const { confirmDialog, openConfirm, closeConfirm } = useConfirmDialog();
+const { toast, showToast, hideToast } = useToast();
+
 /*
   STATE
 */
@@ -56,7 +63,6 @@ const clearError = (field) => {
   }
 
   globalError.value = '';
-  successMsg.value = '';
 };
 
 const roleChipClass = (id) => {
@@ -128,14 +134,15 @@ const validate = () => {
   return Object.keys(e).length === 0;
 };
 
-const handleSubmit = async () => {
-
+const handleSaveClick = () => {
   globalError.value = '';
-  successMsg.value = '';
-  savedUser.value = null;
-
   if (!validate()) return;
+  openConfirm('save');
+};
 
+const executeSubmit = async () => {
+  globalError.value = '';
+  savedUser.value = null;
   loading.value = true;
 
   const payload = {
@@ -146,50 +153,33 @@ const handleSubmit = async () => {
   };
 
   try {
-
     const response = await registerserApi(payload);
-
     const data = response.data;
 
     if (data.success) {
       savedUser.value = data.data;
-
-      resetForm(); // ← reset form dulu (termasuk successMsg → '')
-
-      // Baru set successMsg setelah reset, supaya alert tetap tampil
-      successMsg.value = data.message || 'Register User Successfully';
+      resetForm();
+      closeConfirm();
+      showToast('save');
     }
-
   } catch (err) {
-
+    closeConfirm();
     const res = err.response?.data;
-    console.log(res.details);
+    console.log(res?.details);
 
     /*
       HANDLE VALIDATION ERROR
     */
-
     if (res?.details) {
-
       errors.value = { ...res.details };
-
       globalError.value =
           Object.values(res.details).join(', ') || 'Validation Error';
-    }
-
-    /*
-      HANDLE GENERAL ERROR
-    */
-
-    else {
-
+    } else {
       globalError.value =
           res?.message ||
           'Tidak dapat terhubung ke server';
     }
-
   } finally {
-
     loading.value = false;
   }
 };
@@ -205,7 +195,6 @@ const { resetForm } = useFormReset(
   {
     errors:              { ref: errors,              defaultValue: {} },
     globalError:         { ref: globalError,         defaultValue: '' },
-    successMsg:          { ref: successMsg,          defaultValue: '' },
     showPassword:        { ref: showPassword,        defaultValue: false },
     confirmShowPassword: { ref: confirmShowPassword, defaultValue: false },
   }
@@ -230,15 +219,7 @@ const { resetForm } = useFormReset(
         <span class="register-card-title">Informasi Pengguna</span>
       </div>
 
-      <!-- Success Alert -->
-      <div v-if="successMsg" class="alert-success reg-alert">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-        {{ successMsg }}
-      </div>
-
-      <form class="reg-form" @submit.prevent="handleSubmit" novalidate>
+      <form class="reg-form" @submit.prevent="handleSaveClick" novalidate>
         <!-- Username -->
         <div class="form-group" :class="{ 'has-error': errors.username }">
           <label class="form-label">
@@ -401,10 +382,26 @@ const { resetForm } = useFormReset(
             mode="create"
             :loading="loading"
             @reset="resetForm"
-            @save="handleSubmit"
+            @save="handleSaveClick"
         />
       </form>
     </div>
+
+    <!-- Reusable Confirmation Dialog -->
+    <ConfirmDialog
+      :show="confirmDialog.show"
+      :type="confirmDialog.type"
+      :loading="loading"
+      @confirm="executeSubmit"
+      @cancel="closeConfirm"
+    />
+
+    <!-- Reusable Toast Notification -->
+    <ToastNotif
+      :show="toast.show"
+      :type="toast.type"
+      @close="hideToast"
+    />
   </div>
 </template>
 
